@@ -79,6 +79,8 @@ button:hover{
     padding:10px 25px;
     border-radius:20px;
     backdrop-filter: blur(10px);
+    font-size:28px;
+    font-weight:bold;
 }
 
 /* WIN SCREEN */
@@ -128,7 +130,7 @@ button:hover{
 <!-- INTRO -->
 
 <div id="intro">
-    <h1>Ho creato un piccolo gioco per te ❤️</h1>
+    <h1>Ho creato un piccolo gioco per te, tontolona del mio cuore ❤️</h1>
     <p>Se vinci... succede qualcosa di importante 🙂</p>
     <button onclick="startGame()">Gioca</button>
 </div>
@@ -177,7 +179,7 @@ function startGame(){
         document.getElementById("time").textContent=time;
 
         if(time<=0){
-            alert("Tempo finito! Devi riprovarci 😜");
+            alert("Tempo finito! che tonta 😜");
             location.reload();
         }
 
