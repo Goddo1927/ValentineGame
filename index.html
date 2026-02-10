@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Special Game</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    overflow:hidden;
+    background: radial-gradient(circle at top,#ff7eb3,#ff4d6d);
+    color:white;
+}
+
+/* INTRO */
+
+#intro{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    animation:fadeIn 2s;
+}
+
+@keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+button{
+    margin-top:20px;
+    padding:15px 35px;
+    font-size:20px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    background:white;
+    color:#ff4d6d;
+    font-weight:bold;
+    transition:.2s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+/* GAME */
+
+#game{
+    display:none;
+}
+
+.heart{
+    position:absolute;
+    font-size:28px;
+    animation:fall linear;
+}
+
+@keyframes fall{
+    from{transform:translateY(-10vh);}
+    to{transform:translateY(110vh);}
+}
+
+#hud{
+    position:fixed;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(255,255,255,.2);
+    padding:10px 25px;
+    border-radius:20px;
+    backdrop-filter: blur(10px);
+}
+
+/* WIN SCREEN */
+
+#win{
+    display:none;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+}
+
+#yes{
+    background:#00ffb3;
+    color:black;
+}
+
+#no{
+    background:#eee;
+    color:black;
+    position:absolute;
+}
+
+/* CONFETTI */
+
+.confetti{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:white;
+    animation:confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall{
+    to{
+        transform:translateY(100vh) rotate(720deg);
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+
+<div id="intro">
+    <h1>Ho creato un piccolo gioco per te ❤️</h1>
+    <p>Se vinci... succede qualcosa di importante 🙂</p>
+    <button onclick="startGame()">Gioca</button>
+</div>
+
+<!-- GAME -->
+
+<div id="game">
+    <div id="hud">
+        Cuori: <span id="score">0</span>/15 |
+        Tempo: <span id="time">20</span>
+    </div>
+</div>
+
+<!-- WIN -->
+
+<div id="win">
+    <h1>Will you be my Valentine? ❤️</h1>
+    <div style="margin-top:30px;">
+        <button id="yes" onclick="celebrate()">YES 💘</button>
+        <button id="no">NO 😢</button>
+    </div>
+</div>
+
+<audio id="music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=sweet-112946.mp3">
+</audio>
+
+<script>
+
+let score = 0;
+let time = 20;
+let gameInterval;
+let timerInterval;
+
+function startGame(){
+
+    document.getElementById("intro").style.display="none";
+    document.getElementById("game").style.display="block";
+
+    document.getElementById("music").play().catch(()=>{});
+
+    spawnHearts();
+
+    timerInterval = setInterval(()=>{
+        time--;
+        document.getElementById("time").textContent=time;
+
+        if(time<=0){
+            alert("Tempo finito! Devi riprovarci 😜");
+            location.reload();
+        }
+
+    },1000);
+}
+
+function spawnHearts(){
+
+    gameInterval = setInterval(()=>{
+
+        const heart=document.createElement("div");
+        heart.className="heart";
+        heart.innerHTML="❤️";
+
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.animationDuration=(Math.random()*3+2)+"s";
+
+        heart.onclick=()=>{
+            heart.remove();
+            score++;
+            document.getElementById("score").textContent=score;
+
+            if(score>=15){
+                winGame();
+            }
+        };
+
+        document.body.appendChild(heart);
+
+        setTimeout(()=>heart.remove(),5000);
+
+    },400);
+}
+
+function winGame(){
+
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+
+    document.getElementById("game").style.display="none";
+    document.getElementById("win").style.display="flex";
+
+    dodgeNo();
+    confetti();
+}
+
+function dodgeNo(){
+
+    const btn=document.getElementById("no");
+
+    btn.addEventListener("mouseover",()=>{
+
+        btn.style.left=Math.random()*80+"vw";
+        btn.style.top=Math.random()*80+"vh";
+    });
+}
+
+function confetti(){
+
+    for(let i=0;i<120;i++){
+
+        const c=document.createElement("div");
+        c.className="confetti";
+
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=`hsl(${Math.random()*360},100%,70%)`;
+
+        document.body.appendChild(c);
+
+        setTimeout(()=>c.remove(),3000);
+    }
+}
+
+function celebrate(){
+
+    confetti();
+
+    document.body.innerHTML=`
+    <div style="
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    ">
+        <h1>Mi hai appena reso la persona più felice del mondo ❤️</h1>
+        <h2>Il 14 Febbraio sarà solo l'inizio ✨</h2>
+    </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>
